@@ -39,7 +39,7 @@
     [self ins_addPullToRefreshWithHeight:64 handler:actionHandler];
     
     CGRect defaultFrame = CGRectMake(0, 0, 24, 24);
-        UIView <INSPullToRefreshBackgroundViewDelegate> *pullToRefresh = [[INSDefaultPullToRefresh alloc] initWithFrame:defaultFrame backImage:[UIImage imageNamed:@"circleLight"] frontImage:[UIImage imageNamed:@"circleDark"]];
+        UIView <INSPullToRefreshBackgroundViewDelegate> *pullToRefresh = [[INSDefaultPullToRefresh alloc] initWithFrame:defaultFrame backImage:[UIImage imageNamed:@"light_circle"] frontImage:[UIImage imageNamed:@"dark_circle"]];
     self.ins_pullToRefreshBackgroundView.delegate = pullToRefresh;
     [self.ins_pullToRefreshBackgroundView addSubview:pullToRefresh];
 }
@@ -71,6 +71,7 @@
     UIView <INSAnimatable> *infinityIndicator = [[INSDefaultInfiniteIndicator alloc] initWithFrame:defaultFrame];
     [self.ins_infiniteScrollBackgroundView addSubview:infinityIndicator];
     [infinityIndicator startAnimating];
+    self.ins_infiniteScrollBackgroundView.preserveContentInset = NO;
 }
 
 - (void)chx_removeInfinityScroll {
