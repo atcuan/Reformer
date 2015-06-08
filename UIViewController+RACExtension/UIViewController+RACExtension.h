@@ -1,8 +1,8 @@
 //
-//  Reformer.h
-//  Reformer
+//  UIViewController+RACExtension.h
+//  Haioo
 //
-//  Created by Moch Xiao on 6/6/15.
+//  Created by Moch Xiao on 6/8/15.
 //  Copyright (c) 2015 Moch Xiao (https://github.com/atcuan).
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,23 +24,18 @@
 //  THE SOFTWARE.
 //
 
-#ifndef Reformer_Reformer_h
-#define Reformer_Reformer_h
+#import <UIKit/UIKit.h>
 
-#import "ReformerConfiguration.h"
+#ifdef EnableUIViewControllerRACExtension
 
-// If you wanna ues those method
-// CREATE a new header file named `ReformerConfiguration.h`
-// then, define follow marks enable modules
+@interface UIViewController (RACExtension)
 
-/**
- 
- #define EanbleCHXRefreshControl
- #define EanbleCHXPopupAlertController
- #define EanbleCHXHUD
- #define EanbleCHXCommand
- #define EnableUIViewControllerRACExtension 
- 
- **/
+@property (nonatomic, assign, readonly) BOOL rac_loading;
+- (void)rac_reactive_loading:(BOOL)loading;
+
+@property (nonatomic, copy, readonly) NSString *rac_errorMessage;
+- (void)rac_reactive_errorMessage:(NSString *)errorMessage;
+
+@end
 
 #endif

@@ -37,9 +37,9 @@ static UIView *presentView;
 @implementation CHXHUD
 
 + (void)showHUDWithMessage:(NSString *)message {
-    if (HUD.targetView) {
-        [HUD removeFromSuperview];
-    }
+//    if (HUD.targetView) {
+//        [HUD removeFromSuperview];
+//    }
     
     JGProgressHUD *staticHUD = [self staticHUD];
     staticHUD.indicatorView = nil;
@@ -56,9 +56,9 @@ static UIView *presentView;
 }
 
 + (void)showLoadingHUDWithMessage:(NSString *)message {
-    if (HUD.targetView) {
-        [HUD removeFromSuperview];
-    }
+//    if (HUD.targetView) {
+//        [HUD removeFromSuperview];
+//    }
     
     JGProgressHUD *staticHUD = [self staticHUD];
     staticHUD.interactionType = JGProgressHUDInteractionTypeBlockAllTouches;
@@ -73,9 +73,9 @@ static UIView *presentView;
 }
 
 + (void)showLoadingHUD {
-    if (HUD.targetView) {
-        [HUD removeFromSuperview];
-    }
+//    if (HUD.targetView) {
+//        [HUD removeFromSuperview];
+//    }
     
     JGProgressHUD *staticHUD = [self staticHUD];
     [staticHUD showInView:presentView animated:YES];
