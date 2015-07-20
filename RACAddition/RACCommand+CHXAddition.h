@@ -8,7 +8,7 @@
 
 #import "RACCommand.h"
 
-#ifdef EanbleCHXCommand
+#ifdef RACAddition
 
 extern NSString const * kErrorKey;
 

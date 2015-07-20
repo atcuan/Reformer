@@ -74,6 +74,7 @@ static char RACExtensionerrorMessage;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [UIViewController chx_swizzleInstanceMethod:[UIViewController class] originalSelector:@selector(viewDidLoad) overrideSelector:@selector(hack_viewDidLoad)];
+        [UIViewController chx_swizzleInstanceMethod:[UIViewController class] originalSelector:@selector(didReceiveMemoryWarning) overrideSelector:@selector(hack_didReceiveMemoryWarning)];
     });
 }
 
@@ -100,10 +101,22 @@ static char RACExtensionerrorMessage;
     }];
 }
 
+- (void)hack_didReceiveMemoryWarning {
+    [self hack_didReceiveMemoryWarning];
+    
+    if (!self.isViewLoaded || self.view.window) {
+        return;
+    }
+    
+    NSLog(@"111");
+    [self rac_handleReceivedMemoryWarning];
+}
+
 #pragma mark - Reactive methods
 
 - (void)rac_reactive_loading:(BOOL)loading {}
 - (void)rac_reactive_errorMessage:(NSString *)errorMessage {}
+- (void)rac_handleReceivedMemoryWarning {}
 
 #pragma mark - Private
 

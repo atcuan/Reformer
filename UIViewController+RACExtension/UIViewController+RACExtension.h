@@ -36,6 +36,8 @@
 @property (nonatomic, copy, readonly) NSString *rac_errorMessage;
 - (void)rac_reactive_errorMessage:(NSString *)errorMessage;
 
+- (void)rac_handleReceivedMemoryWarning;
+
 @end
 
 #endif
