@@ -31,40 +31,57 @@
 #import <objc/runtime.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
-static char RACExtensionLoading;
-static char RACExtensionerrorMessage;
+static const void * RACExtensioneWillHandleMemoryWarningSignal = @"rac_willHandleMemoryWarningSignal";
+static const void * RACExtensioneMemoryWarningActive = @"rac_memoryWarningActive";
+
+#pragma mark -
+
+@interface NSObject (RACExtension)
+@end
+
+// https://github.com/atcuan/WildAppExtension/blob/master/Categories/NSObjectExtension.m#L157
+@implementation NSObject (RACExtension)
+
+- (void)rac_associateObject:(id)object forKey:(const void *)key {
+    [self willChangeValueForKey:(__bridge NSString *)key];
+    objc_setAssociatedObject(self, key, object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [self didChangeValueForKey:(__bridge NSString *)key];
+}
+
+- (void)rac_associateWeaklyObject:(id)object forKey:(const void *)key {
+    objc_setAssociatedObject(self, key, object, OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (id)rac_associatedObjectForKey:(const void *)key {
+    return objc_getAssociatedObject(self, key);
+}
+
+@end
+
+#pragma mark - UIViewController (RACExtension)
+
+@interface UIViewController ()
+@property (nonatomic, assign) BOOL rac_memoryWarningActive;
+@end
 
 @implementation UIViewController (RACExtension)
 
-@dynamic rac_loading;
-@dynamic rac_errorMessage;
-
 #pragma mark - Dynamic Accessors
 
-- (BOOL)rac_loading {
-    return [objc_getAssociatedObject(self, &RACExtensionLoading) boolValue];
+- (RACSignal *)rac_willHandleMemoryWarningSignal {
+    return [self rac_associatedObjectForKey:RACExtensioneWillHandleMemoryWarningSignal];
 }
 
-- (void)setRac_loading:(BOOL)rac_loading {
-    NSString *key = NSStringFromSelector(_cmd);
-    [self willChangeValueForKey:key];
-    objc_setAssociatedObject(self, &RACExtensionLoading,
-                             @(rac_loading),
-                             OBJC_ASSOCIATION_ASSIGN);
-    [self didChangeValueForKey:key];
+- (void)setRac_willHandleMemoryWarningSignal:(RACSignal *)rac_willHandleMemoryWarningSignal {
+    [self rac_associateObject:rac_willHandleMemoryWarningSignal forKey:RACExtensioneWillHandleMemoryWarningSignal];
 }
 
-- (NSString *)rac_errorMessage {
-    return objc_getAssociatedObject(self, &RACExtensionerrorMessage);
+- (void)setRac_memoryWarningActive:(BOOL)rac_memoryWarningActive {
+    [self rac_associateWeaklyObject:@(rac_memoryWarningActive) forKey:RACExtensioneMemoryWarningActive];
 }
 
-- (void)setRac_errorMessage:(NSString *)rac_errorMessage {
-    NSString *key = NSStringFromSelector(_cmd);
-    [self willChangeValueForKey:key];
-    objc_setAssociatedObject(self, &RACExtensionerrorMessage,
-                             rac_errorMessage,
-                             OBJC_ASSOCIATION_COPY_NONATOMIC);
-    [self didChangeValueForKey:key];
+- (BOOL)rac_memoryWarningActive {
+    return [[self rac_associatedObjectForKey:RACExtensioneMemoryWarningActive] boolValue];
 }
 
 #pragma mark - load
@@ -73,55 +90,45 @@ static char RACExtensionerrorMessage;
     // swizzle
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        [UIViewController chx_swizzleInstanceMethod:[UIViewController class] originalSelector:@selector(viewDidLoad) overrideSelector:@selector(hack_viewDidLoad)];
-        [UIViewController chx_swizzleInstanceMethod:[UIViewController class] originalSelector:@selector(didReceiveMemoryWarning) overrideSelector:@selector(hack_didReceiveMemoryWarning)];
+        [UIViewController rac_swizzleInstanceMethodOriginalSelector:@selector(initWithNibName:bundle:) overrideSelector:@selector(rac_hook_initWithNibName:bundle:)];
+        [UIViewController rac_swizzleInstanceMethodOriginalSelector:@selector(viewDidLoad) overrideSelector:@selector(rac_hook_viewDidLoad)];
+        [UIViewController rac_swizzleInstanceMethodOriginalSelector:@selector(didReceiveMemoryWarning) overrideSelector:@selector(rac_hook_didReceiveMemoryWarning)];
     });
 }
 
-#pragma mark - Hack
-
-- (void)hack_viewDidLoad {
-    [self hack_viewDidLoad];
+- (instancetype)rac_hook_initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    id instance = [self rac_hook_initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     
     @weakify(self);
-    // 添加 RAC 订阅
-    [[[[RACObserve(self, rac_loading) skip:1] replayLast] deliverOnMainThread] subscribeNext:^(NSNumber *loading) {
+    self.rac_willHandleMemoryWarningSignal = [[[RACObserve(self, rac_memoryWarningActive) filter:^BOOL(NSNumber *rac_memoryWarningActive) {
+        return [rac_memoryWarningActive boolValue];
+    }] map:^id(id _) {
         @strongify(self);
-        if ([self respondsToSelector:@selector(rac_reactive_loading:)]) {
-            [self rac_reactive_loading:[loading boolValue]];
-        }
-    }];
-    [[[[RACObserve(self, rac_errorMessage) replayLast] filter:^BOOL(NSString *errorMessage) {
-        return nil != errorMessage && errorMessage.length > 0;
-    }] deliverOnMainThread] subscribeNext:^(NSString *errorMessage) {
-        @strongify(self);
-        if ([self respondsToSelector:@selector(rac_reactive_errorMessage:)]) {
-            [self rac_reactive_errorMessage:errorMessage];
-        }
-    }];
+        return self;
+    }] setNameWithFormat:@"%@ -rac_willHandleMemoryWarningSignal", self];
+    
+    return instance;
 }
 
-- (void)hack_didReceiveMemoryWarning {
-    [self hack_didReceiveMemoryWarning];
+- (void)rac_hook_viewDidLoad {
+    [self rac_hook_viewDidLoad];
     
-    if (!self.isViewLoaded || self.view.window) {
-        return;
+    self.rac_memoryWarningActive = NO;
+}
+
+- (void)rac_hook_didReceiveMemoryWarning {
+    if (!self.view.window && self.isViewLoaded) {
+        self.rac_memoryWarningActive = YES;
     }
-    
-    NSLog(@"111");
-    [self rac_handleReceivedMemoryWarning];
+
+    [self rac_hook_didReceiveMemoryWarning];
 }
-
-#pragma mark - Reactive methods
-
-- (void)rac_reactive_loading:(BOOL)loading {}
-- (void)rac_reactive_errorMessage:(NSString *)errorMessage {}
-- (void)rac_handleReceivedMemoryWarning {}
 
 #pragma mark - Private
 
 // 该方法应该在 dispatch_once 中执行
-+ (void)chx_swizzleInstanceMethod:(Class)clazz originalSelector:(SEL)originalSelector overrideSelector:(SEL)overrideSelector {
++ (void)rac_swizzleInstanceMethodOriginalSelector:(SEL)originalSelector overrideSelector:(SEL)overrideSelector {
+    Class clazz = [UIViewController class];
     Method originalMethod = class_getInstanceMethod(clazz, originalSelector);
     Method overrideMethod = class_getInstanceMethod(clazz, overrideSelector);
     
@@ -133,5 +140,6 @@ static char RACExtensionerrorMessage;
 }
 
 @end
+
 
 #endif

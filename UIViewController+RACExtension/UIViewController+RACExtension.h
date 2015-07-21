@@ -28,15 +28,11 @@
 
 #ifdef EnableUIViewControllerRACExtension
 
+@class RACSignal;
+
 @interface UIViewController (RACExtension)
 
-@property (nonatomic, assign, readonly) BOOL rac_loading;
-- (void)rac_reactive_loading:(BOOL)loading;
-
-@property (nonatomic, copy, readonly) NSString *rac_errorMessage;
-- (void)rac_reactive_errorMessage:(NSString *)errorMessage;
-
-- (void)rac_handleReceivedMemoryWarning;
+@property (nonatomic, strong, readonly) RACSignal *rac_willHandleMemoryWarningSignal;
 
 @end
 
