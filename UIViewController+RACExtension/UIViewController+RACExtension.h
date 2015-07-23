@@ -32,7 +32,15 @@
 
 @interface UIViewController (RACExtension)
 
-@property (nonatomic, strong, readonly) RACSignal *rac_willHandleMemoryWarningSignal;
+/// When received memory warning, If you handle it, all bind RAC will re-bind again you must broken bind relationship
+/// by use`takeUntill:self.chx_willHandleMemoryWarningSignal`
+@property (nonatomic, strong, readonly) RACSignal *chx_willHandleMemoryWarningSignal;
+
+/// Displays an error to the user.
+- (void)chx_presentError:(NSError *)error;
+
+/// Displayes an error messge to the user
+- (void)chx_presentErrorMessage:(NSString *)errorMessage;
 
 @end
 

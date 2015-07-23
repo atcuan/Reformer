@@ -31,7 +31,7 @@
 #import <objc/runtime.h>
 #import <ReactiveCocoa/ReactiveCocoa.h>
 
-static const void * RACExtensioneWillHandleMemoryWarningSignal = @"rac_willHandleMemoryWarningSignal";
+static const void * RACExtensioneWillHandleMemoryWarningSignal = @"chx_willHandleMemoryWarningSignal";
 static const void * RACExtensioneMemoryWarningActive = @"rac_memoryWarningActive";
 
 #pragma mark -
@@ -68,12 +68,12 @@ static const void * RACExtensioneMemoryWarningActive = @"rac_memoryWarningActive
 
 #pragma mark - Dynamic Accessors
 
-- (RACSignal *)rac_willHandleMemoryWarningSignal {
+- (RACSignal *)chx_willHandleMemoryWarningSignal {
     return [self rac_associatedObjectForKey:RACExtensioneWillHandleMemoryWarningSignal];
 }
 
-- (void)setRac_willHandleMemoryWarningSignal:(RACSignal *)rac_willHandleMemoryWarningSignal {
-    [self rac_associateObject:rac_willHandleMemoryWarningSignal forKey:RACExtensioneWillHandleMemoryWarningSignal];
+- (void)setChx_willHandleMemoryWarningSignal:(RACSignal *)chx_willHandleMemoryWarningSignal {
+    [self rac_associateObject:chx_willHandleMemoryWarningSignal forKey:RACExtensioneWillHandleMemoryWarningSignal];
 }
 
 - (void)setRac_memoryWarningActive:(BOOL)rac_memoryWarningActive {
@@ -100,12 +100,12 @@ static const void * RACExtensioneMemoryWarningActive = @"rac_memoryWarningActive
     id instance = [self rac_hook_initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     
     @weakify(self);
-    self.rac_willHandleMemoryWarningSignal = [[[RACObserve(self, rac_memoryWarningActive) filter:^BOOL(NSNumber *rac_memoryWarningActive) {
+    self.chx_willHandleMemoryWarningSignal = [[[RACObserve(self, rac_memoryWarningActive) filter:^BOOL(NSNumber *rac_memoryWarningActive) {
         return [rac_memoryWarningActive boolValue];
     }] map:^id(id _) {
         @strongify(self);
         return self;
-    }] setNameWithFormat:@"%@ -rac_willHandleMemoryWarningSignal", self];
+    }] setNameWithFormat:@"%@ -chx_willHandleMemoryWarningSignal", self];
     
     return instance;
 }
@@ -123,6 +123,25 @@ static const void * RACExtensioneMemoryWarningActive = @"rac_memoryWarningActive
 
     [self rac_hook_didReceiveMemoryWarning];
 }
+
+#pragma mark - Public
+
+- (void)chx_presentError:(NSError *)error {
+    [[[UIAlertView alloc] initWithTitle:error.localizedDescription
+                                message:error.localizedRecoverySuggestion
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                      otherButtonTitles:nil] show];
+}
+
+- (void)chx_presentErrorMessage:(NSString *)errorMessage {
+    [[[UIAlertView alloc] initWithTitle:@""
+                                message:errorMessage
+                               delegate:nil
+                      cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                      otherButtonTitles:nil] show];
+}
+
 
 #pragma mark - Private
 
