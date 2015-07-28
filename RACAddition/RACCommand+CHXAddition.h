@@ -25,6 +25,7 @@
 //
 
 #import "RACCommand.h"
+#import "Reformer.h"
 
 #ifdef RACAddition
 

@@ -25,6 +25,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Reformer.h"
 
 #ifdef EnableUIViewControllerRACExtension
 
