@@ -35,6 +35,8 @@
 
 - (instancetype)initWithTrigger:(RACSignal *)triggerSignal signalBlock:(RACSignal * (^)(id input))signalBlock;
 @property (nonatomic, strong, readonly) RACSignal *errors;
+/// Send Error's userInfo Key MUST be `Error`
+@property (nonatomic, strong, readonly) RACSignal *errorMessage;
 @property (nonatomic, strong, readonly) RACSignal *next;
 @property (nonatomic, strong, readonly) RACSignal *completed;
 

@@ -33,6 +33,7 @@
 @interface CHXCommand ()
 
 @property (nonatomic, strong, readwrite) RACSignal *errors;
+@property (nonatomic, strong, readwrite) RACSignal *errorMessage;
 @property (nonatomic, strong, readwrite) RACSignal *next;
 @property (nonatomic, strong, readwrite) RACSignal *completed;
 
@@ -72,6 +73,12 @@
             return [RACSignal return:error];
         }];
     }] deliverOnMainThread] setNameWithFormat:@"%@ -errors", self];
+    
+    self.errorMessage = [[self.errors filter:^BOOL(id value) {
+        return value;
+    }] map:^id(NSError *error) {
+        return error.userInfo[@"Error"];
+    }];
     
     // subscribe
     RACDisposable *theSignalDisposable = [theSignal subscribeError:^(NSError *error) {
