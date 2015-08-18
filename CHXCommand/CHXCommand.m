@@ -75,7 +75,7 @@
     }] deliverOnMainThread] setNameWithFormat:@"%@ -errors", self];
     
     self.errorMessage = [[self.errors filter:^BOOL(id value) {
-        return value;
+        return nil != value;
     }] map:^id(NSError *error) {
         return error.userInfo[@"Error"];
     }];
