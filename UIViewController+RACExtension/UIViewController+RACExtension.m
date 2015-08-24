@@ -3,7 +3,7 @@
 //  Haioo
 //
 //  Created by Moch Xiao on 6/8/15.
-//  Copyright (c) 2015 Moch Xiao (https://github.com/atcuan).
+//  Copyright (c) 2015 Moch Xiao (https://github.com/cuzv).
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ static const void * RACExtensioneMemoryWarningActive = @"rac_memoryWarningActive
 @interface NSObject (RACExtension)
 @end
 
-// https://github.com/atcuan/WildAppExtension/blob/master/Categories/NSObjectExtension.m#L157
+// https://github.com/cuzv/WildAppExtension/blob/master/Categories/NSObjectExtension.m#L157
 @implementation NSObject (RACExtension)
 
 - (void)rac_associateObject:(id)object forKey:(const void *)key {
