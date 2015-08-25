@@ -29,8 +29,6 @@
 
 #ifdef RACAddition
 
-extern NSString const * kErrorKey;
-
 @interface RACCommand (CHXAddition)
 
 - (RACSignal *)chx_next;

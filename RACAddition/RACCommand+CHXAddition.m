@@ -28,7 +28,6 @@
 
 #ifdef RACAddition
 
-NSString const * kErrorKey = @"Error";
 
 @implementation RACCommand (CHXAddition)
 
@@ -46,7 +45,7 @@ NSString const * kErrorKey = @"Error";
     RACSignal *error = [[[self.errors filter:^BOOL(NSError *error) {
         return nil != error;
     }] map:^id(NSError *error) {
-        return error.userInfo[kErrorKey];
+        return [error localizedDescription];
     }] deliverOnMainThread];
 
     return error;

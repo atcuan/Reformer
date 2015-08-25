@@ -73,13 +73,7 @@
             return [RACSignal return:error];
         }];
     }] deliverOnMainThread] setNameWithFormat:@"%@ -errors", self];
-    
-    self.errorMessage = [[self.errors filter:^BOOL(id value) {
-        return nil != value;
-    }] map:^id(NSError *error) {
-        return error.userInfo[@"Error"];
-    }];
-    
+        
     // subscribe
     RACDisposable *theSignalDisposable = [theSignal subscribeError:^(NSError *error) {
     } completed:^{

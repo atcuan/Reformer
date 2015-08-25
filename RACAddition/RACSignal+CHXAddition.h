@@ -31,8 +31,11 @@
 
 @interface RACSignal (CHXAddition)
 
-/// filter nil next stream event
+/// Filter nil next stream event
 - (RACSignal *)filterNil;
+
+/// Filter nil error and map the error LizedDescription to next
+- (RACSignal *)filterNilErrorMaplocaLizedDescription;
 
 @end
 
