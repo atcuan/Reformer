@@ -3,7 +3,7 @@
 //  Haioo
 //
 //  Created by Moch Xiao on 7/25/15.
-//  Copyright (c) 2015 Haioo. All rights reserved.
+//  Copyright (c) 2015 Moch Xiao (https://github.com/atcuan).
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
