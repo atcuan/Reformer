@@ -36,7 +36,7 @@
     }];
 }
 
-- (RACSignal *)filterNilErrorMaplocaLizedDescription {
+- (RACSignal *)filterNilErrorMapLocalizedDescription {
     return [[self filter:^BOOL(NSError *error) {
         return nil != error;
     }] map:^id(NSError *error) {

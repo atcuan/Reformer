@@ -35,7 +35,7 @@
 - (RACSignal *)filterNil;
 
 /// Filter nil error and map the error LizedDescription to next
-- (RACSignal *)filterNilErrorMaplocaLizedDescription;
+- (RACSignal *)filterNilErrorMapLocalizedDescription;
 
 @end
 
