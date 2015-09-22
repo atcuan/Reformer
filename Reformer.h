@@ -40,7 +40,8 @@
  #define EanbleCHXHUD
  #define EanbleCHXCommand
  #define EnableUIViewControllerRACExtension 
- 
+ #define SDWebImageAddition
+
  **/
 
 #endif
