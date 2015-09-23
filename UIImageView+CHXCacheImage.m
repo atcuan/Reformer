@@ -32,7 +32,14 @@
 - (void)chx_lazyLoadImageWithTargetPath:(NSString *)targetPath placeholderImage:(UIImage *)placeholderImage {
     UIImage *cachedImage = [self cachedImageForTargetPath:targetPath];
     if (!cachedImage) {
-        [self sd_setImageWithURL:[NSURL URLWithString:targetPath] placeholderImage:placeholderImage];
+        [self sd_setImageWithURL:[NSURL URLWithString:targetPath] placeholderImage:placeholderImage completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            if (!error &&[imageURL.absoluteString isEqualToString:targetPath]) {
+                self.alpha = 0;
+                [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                    self.alpha = 1;
+                } completion:nil];
+            }
+        }];
     }
 }
 
@@ -45,9 +52,6 @@
     SDImageCache *cache = [manager imageCache];
     NSString *key = [manager cacheKeyForURL:[NSURL URLWithString:targetPath]];
     UIImage *image = [cache imageFromMemoryCacheForKey:key];
-    if (!image) {
-        image = [cache imageFromDiskCacheForKey:key];
-    }
     
     return image;
 }
